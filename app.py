@@ -161,7 +161,9 @@ c5.metric("Avg Latency", f"{avg_latency} ms")
 st.caption("These metrics help security and operations teams prioritize suspicious device activity.")
 
 st.divider()
+top_location = filtered.groupby("location")["risk_level"].apply(lambda x: (x=="High").sum()).idxmax()
 
+st.warning(f"🚨 Highest risk activity detected in: **{top_location}**")
 left, right = st.columns([1.25, 1])
 
 with left:
@@ -258,7 +260,16 @@ with right2:
 
 st.divider()
 
-st.markdown('<div class="section-title">Incident Review Queue</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Security Investigation Panel</div>', unsafe_allow_html=True)
+high_risk_devices = filtered[filtered["risk_level"] == "High"]["device_id"].nunique()
+
+summary = f"""
+SentinelAI has detected **{high_risk} high-risk events** across **{high_risk_devices} devices**.
+The most common risk indicators include abnormal login attempts and unusual data transfer patterns.
+Immediate investigation is recommended for high-risk devices to prevent potential system compromise.
+"""
+
+st.info(summary)
 st.caption("Plain-English explanations help analysts and non-technical stakeholders understand why a device was flagged.")
 
 review = filtered.copy()
@@ -283,8 +294,7 @@ st.dataframe(review, use_container_width=True, hide_index=True)
 
 st.divider()
 
-st.markdown('<div class="section-title">Product Thinking</div>', unsafe_allow_html=True)
-
+st.markdown('<div class="section-title">Product Intelligence Layer</div>', unsafe_allow_html=True)
 p1, p2, p3 = st.columns(3)
 
 with p1:
@@ -307,4 +317,13 @@ with p3:
 
 st.success(
     "SentinelAI is a portfolio MVP demonstrating product strategy, AI systems thinking, cybersecurity awareness, and data-driven execution."
+)
+st.divider()
+
+st.markdown('<div class="section-title">Why This Matters</div>', unsafe_allow_html=True)
+
+st.write(
+    "SentinelAI bridges the gap between complex cybersecurity data and decision-making. "
+    "It enables both technical and non-technical stakeholders to quickly understand risks, "
+    "prioritize incidents, and improve operational security in IoT environments."
 )
